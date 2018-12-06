@@ -32,13 +32,20 @@ class App extends Component {
   handleBegin = async () => {
       //Gets user's current location.
       navigator.geolocation.getCurrentPosition(this.returnCurrentPos)
+      //this.handleAirports();
+  }
 
-      //Simple demonstration of how to push.
-      // let temp = this.state.airports;
-      // temp.push({lat: this.state.user_lat, lng: this.state.user_long})
-      // this.setState({
-      //   airports: temp
-      // });
+  handleAirports = async () => {
+    const query = await fetch("http://b7b0cfe0.ngrok.io/getairports")
+    const result = await query.json();
+    let temp = [];
+    for(let element in result){
+      temp.push({iata: result[element].iata, name:result[element].name,lat: result[element].lat, lng: result[element].lng})
+    }
+
+    this.setState({
+      airports: temp
+    });
   }
 
   handleStartChange = async (e,data) => {
@@ -145,7 +152,7 @@ class App extends Component {
 
             {
               airports.map(airportPos => <Marker
-                    position={airportPos}
+                    position={{lat: airportPos.lat, lng: airportPos.lng}}
                     icon={{
                       url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTR-VJgmGgOSXcqYUKzL67aAKaj05fEMxJrFarvw8eNG0FJRf4Q",
                       anchor: new this.props.google.maps.Point(32,32),
