@@ -60,13 +60,23 @@ class App extends Component {
     });
   }
 
-  handleButtonClick = () => {
+  handleButtonClick = async () => {
     alert(this.state.curr_start + ' to ' + this.state.curr_end)
+
+    const url = "https://b7b0cfe0.ngrok.io"
+    const body = {
+      start: 'BQK',
+      end: 'BLQ'
+    }
+    const query = await fetch(url, {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        mode: "cors", // no-cors, cors, *same-origin
+        body: JSON.stringify(body)
+    })
   }
 
   handleAutoComplete = async (curr_input) => {
     if(curr_input !== ''){
-      const { airport_names } = this.state
       const url = "https://api.sandbox.amadeus.com/v1.2/airports/autocomplete?apikey=4AmXBV32ASqGFcyq5eYK3O04RsatzXID&term=" + curr_input
       const query = await fetch(url, {
           method: "GET", // *GET, POST, PUT, DELETE, etc.
