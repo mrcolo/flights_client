@@ -62,17 +62,18 @@ class App extends Component {
 
   handleButtonClick = async () => {
     alert(this.state.curr_start + ' to ' + this.state.curr_end)
-
-    const url = "https://b7b0cfe0.ngrok.io"
+    const {curr_start, curr_end} = this.state;
+    const url = "https://b7b0cfe0.ngrok.io/compute"
     const body = {
-      start: 'BQK',
-      end: 'BLQ'
+      start: curr_start,
+      end: curr_end
     }
-    const query = await fetch(url, {
+
+    await fetch(url, {
         method: "POST", // *GET, POST, PUT, DELETE, etc.
-        mode: "cors", // no-cors, cors, *same-origin
         body: JSON.stringify(body)
     })
+
   }
 
   handleAutoComplete = async (curr_input) => {
