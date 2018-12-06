@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
-import { Button, Input, Segment, Header } from 'semantic-ui-react'
+import { Button, Input, Segment, Header, Container, Menu, Label } from 'semantic-ui-react'
 import './App.css';
 
 class App extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       airports: [],
       airport_names: [],
@@ -22,7 +21,6 @@ class App extends Component {
    componentWillMount() {
      this.handleBegin();
    }
-
 
   returnCurrentPos = async(position) => {
     this.setState({
@@ -63,11 +61,12 @@ class App extends Component {
   }
 
   handleButtonClick = () => {
-    alert(this.state.curr_start, this.state.curr_end)
+    alert(this.state.curr_start + ' to ' + this.state.curr_end)
   }
 
   handleAutoComplete = async (curr_input) => {
     if(curr_input !== ''){
+      const { airport_names } = this.state
       const url = "https://api.sandbox.amadeus.com/v1.2/airports/autocomplete?apikey=4AmXBV32ASqGFcyq5eYK3O04RsatzXID&term=" + curr_input
       const query = await fetch(url, {
           method: "GET", // *GET, POST, PUT, DELETE, etc.
@@ -89,13 +88,12 @@ class App extends Component {
   }
 
   render() {
-    const { airports, airport_names, user_lat, user_long} = this.state
+    const {airports, airport_names, user_lat, user_long} = this.state
 
     return (
       <div className="App">
-          <Segment vertical>
-                <Header> ✈️ FLIGHT PLANNER ✈️</Header>
-
+          <Menu fixed='top'>
+                <Header  style={{paddingTop: 20, paddingLeft: 10, fontSize: 30}}>✈️</Header>
                   <Input list='airports' label='From' onChange={this.handleStartChange}  style={{padding: 10}} size='big'/>
                   <datalist id='airports'>
                     {
@@ -110,10 +108,12 @@ class App extends Component {
                       <option value={name.value}>name.value + ' - ' + name.label</option>))
                   }
                 </datalist>
-                <Button onClick={this.handleButtonClick} color='yellow' size='big' >
-                  Get Itinerary
-                </Button>
-          </Segment>
+                <div style={{paddingTop: 15, paddingRight: 150}}>
+                  <Button fluid onClick={this.handleButtonClick} color='yellow' size='medium' >
+                    Get Itinerary
+                  </Button>
+                </div>
+          </Menu>
             <Map
               centerAroundCurrentLocation
               className="map"
