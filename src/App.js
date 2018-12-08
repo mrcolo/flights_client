@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import {Map, InfoWindow, Marker, GoogleApiWrapper, Polyline} from 'google-maps-react';
-import { Button, Input, Segment, Header, Container, Menu, Label } from 'semantic-ui-react'
+import { Button, Input, Segment, Header, Container, Menu, Label, Step } from 'semantic-ui-react'
 import './App.css';
 
 class App extends Component {
@@ -170,6 +170,19 @@ class App extends Component {
               strokeOpacity={0.8}
               strokeWeight={2} />
             </Map>
+            <Menu fixed="bottom">
+            <Step.Group ordered>
+
+            {
+              airports.map((airportPos,i) =>
+              <Step active>
+                <Step.Content>
+                  <Step.Title>{airportPos.name}</Step.Title>
+                </Step.Content>
+              </Step>)
+            }
+            </Step.Group>
+            </Menu>
       </div>
     );
   }
