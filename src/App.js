@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
-import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
+import {Map, InfoWindow, Marker, GoogleApiWrapper, Polyline} from 'google-maps-react';
 import { Button, Input, Segment, Header, Container, Menu, Label } from 'semantic-ui-react'
 import './App.css';
 
@@ -13,8 +13,11 @@ class App extends Component {
       currentItinerary: [],
       curr_start: '',
       curr_end: '',
+      center_lat: Number,
+      center_lng: Number,
+      coords: [],
       user_lat: Number,
-      user_long: Number
+      user_lng: Number
     };
   }
 
@@ -25,7 +28,7 @@ class App extends Component {
   returnCurrentPos = async(position) => {
     this.setState({
       user_lat: position.coords.latitude,
-      user_long: position.coords.longitude
+      user_lng: position.coords.longitude
     });
   }
 
@@ -33,19 +36,6 @@ class App extends Component {
       //Gets user's current location.
       navigator.geolocation.getCurrentPosition(this.returnCurrentPos)
       //this.handleAirports();
-  }
-
-  handleAirports = async () => {
-    const query = await fetch("http://b7b0cfe0.ngrok.io/getairports")
-    const result = await query.json();
-    let temp = [];
-    for(let element in result){
-      temp.push({iata: result[element].iata, name:result[element].name,lat: result[element].lat, lng: result[element].lng})
-    }
-
-    this.setState({
-      airports: temp
-    });
   }
 
   handleStartChange = async (e,data) => {
@@ -68,19 +58,36 @@ class App extends Component {
   }
 
   handleButtonClick = async () => {
-    alert(this.state.curr_start + ' to ' + this.state.curr_end)
     const {curr_start, curr_end} = this.state;
     const url = "https://b7b0cfe0.ngrok.io/compute"
+
     const body = {
-      start: curr_start,
-      end: curr_end
+      start: curr_start.toUpperCase(),
+      end: curr_end.toUpperCase()
     }
 
-    await fetch(url, {
+    const query = await fetch(url, {
         method: "POST", // *GET, POST, PUT, DELETE, etc.
         body: JSON.stringify(body)
     })
 
+    const json = await query.json();
+    console.log(json)
+
+    let temp = [];
+    let coords = [];
+    for(let element in json){
+
+      temp.push({iata: json[element].iata, name:json[element].name,lat: json[element].lat, lng: json[element].lng})
+      coords.push({lat: parseFloat(json[element].lat), lng: parseFloat(json[element].lng)})
+    }
+    console.log(coords)
+    this.setState({
+      airports: temp,
+      coords: coords,
+      center_lat: coords[0].lat,
+      center_lng: coords[0].lng
+    });
   }
 
   handleAutoComplete = async (curr_input) => {
@@ -101,12 +108,8 @@ class App extends Component {
     }
   }
 
-  handleItinerary = async() => {
-
-  }
-
   render() {
-    const {airports, airport_names, user_lat, user_long} = this.state
+    const {airports, airport_names, user_lat, user_lng, coords} = this.state
 
     return (
       <div className="App">
@@ -133,32 +136,39 @@ class App extends Component {
                 </div>
           </Menu>
             <Map
-              centerAroundCurrentLocation
+              initialCenter={{
+                lat: user_lat,
+                lng: user_lng
+              }}
+              center={{lat: this.state.center_lat, lng: this.state.center_lng}}
               className="map"
               google={this.props.google}
               style={{ height: '100%', position: 'relative', width: '100%' }}
-              zoom={14}
+              zoom={4}
             >
 
             <Marker
               name={'Your Position'}
-              position={{lat: user_lat, lng: user_long}}
+              position={{lat: user_lat, lng: user_lng}}
               icon={{
                 url: "http://pluspng.com/img-png/you-are-here-png-hd-you-are-here-icon-512.png",
                 anchor: new this.props.google.maps.Point(32,32),
-                scaledSize: new this.props.google.maps.Size(64,64)
+                scaledSize: new this.props.google.maps.Size(32,32)
               }}
             />
 
             {
-              airports.map(airportPos => <Marker
+              airports.map((airportPos,i) => <Marker
+                     name={airportPos.name}
                     position={{lat: airportPos.lat, lng: airportPos.lng}}
-                    icon={{
-                      url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTR-VJgmGgOSXcqYUKzL67aAKaj05fEMxJrFarvw8eNG0FJRf4Q",
-                      anchor: new this.props.google.maps.Point(32,32),
-                      scaledSize: new this.props.google.maps.Size(64,64)
-                    }} />)
+                    label={i}
+                     />)
             }
+            <Polyline
+              path={coords}
+              strokeColor="#FABD08"
+              strokeOpacity={0.8}
+              strokeWeight={2} />
             </Map>
       </div>
     );
