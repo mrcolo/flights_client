@@ -177,7 +177,7 @@ class App extends Component {
               airports.map((airportPos,i) =>
               <Step active>
                 <Step.Content>
-                  <Step.Title>{airportPos.name}</Step.Title>
+                  <Step.Title as="a" href={"https://www.google.com/search?q=" + airportPos.name}>{airportPos.name}</Step.Title>
                 </Step.Content>
               </Step>)
             }
