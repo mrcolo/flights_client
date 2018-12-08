@@ -110,7 +110,6 @@ class App extends Component {
 
   render() {
     const {airports, airport_names, user_lat, user_lng, coords} = this.state
-
     return (
       <div className="App">
           <Menu fixed='top'>
@@ -136,15 +135,12 @@ class App extends Component {
                 </div>
           </Menu>
             <Map
-              initialCenter={{
-                lat: user_lat,
-                lng: user_lng
-              }}
+              centerAroundCurrentLocation
               center={{lat: this.state.center_lat, lng: this.state.center_lng}}
               className="map"
               google={this.props.google}
               style={{ height: '100%', position: 'relative', width: '100%' }}
-              zoom={4}
+              zoom={4 }
             >
 
             <Marker
