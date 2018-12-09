@@ -60,20 +60,21 @@ class App extends Component {
   handleButtonClick = async () => {
     const {curr_start, curr_end} = this.state;
     const url = "https://b7b0cfe0.ngrok.io/compute"
-
+    console.log("test")
     const body = {
       start: curr_start.toUpperCase(),
       end: curr_end.toUpperCase()
     }
 
+
     const query = await fetch(url, {
         method: "POST", // *GET, POST, PUT, DELETE, etc.
         body: JSON.stringify(body)
     })
+    console.log("test")
     console.log(query)
-    if(query){
-      const json = await query.json();
 
+      const json = await query.json();
 
       let temp = [];
       let coords = [];
@@ -89,7 +90,6 @@ class App extends Component {
         center_lat: coords[0].lat,
         center_lng: coords[0].lng
       });
-    }
 
   }
 
