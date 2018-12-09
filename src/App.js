@@ -70,24 +70,27 @@ class App extends Component {
         method: "POST", // *GET, POST, PUT, DELETE, etc.
         body: JSON.stringify(body)
     })
+    console.log(query)
+    if(query){
+      const json = await query.json();
 
-    const json = await query.json();
-    console.log(json)
 
-    let temp = [];
-    let coords = [];
-    for(let element in json){
+      let temp = [];
+      let coords = [];
+      for(let element in json){
 
-      temp.push({iata: json[element].iata, name:json[element].name,lat: json[element].lat, lng: json[element].lng})
-      coords.push({lat: parseFloat(json[element].lat), lng: parseFloat(json[element].lng)})
+        temp.push({iata: json[element].iata, name:json[element].name,lat: json[element].lat, lng: json[element].lng})
+        coords.push({lat: parseFloat(json[element].lat), lng: parseFloat(json[element].lng)})
+      }
+      console.log(coords)
+      this.setState({
+        airports: temp,
+        coords: coords,
+        center_lat: coords[0].lat,
+        center_lng: coords[0].lng
+      });
     }
-    console.log(coords)
-    this.setState({
-      airports: temp,
-      coords: coords,
-      center_lat: coords[0].lat,
-      center_lng: coords[0].lng
-    });
+
   }
 
   handleAutoComplete = async (curr_input) => {
