@@ -59,7 +59,7 @@ class App extends Component {
 
   handleButtonClick = async () => {
     const {curr_start, curr_end} = this.state;
-    const url = "http://badf1ff5.ngrok.io/compute"
+    const url = "http://07da1955.ngrok.io/compute"
     console.log(curr_start.toUpperCase())
     const body = {
       start: curr_start.toUpperCase(),
