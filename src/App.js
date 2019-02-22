@@ -39,7 +39,7 @@ class App extends Component {
   }
 
   handleStartChange = async (e,data) => {
-    await this.handleAutoComplete(data.value);
+    //await this.handleAutoComplete(data.value);
 
 
     const result = data.value.slice(0,3)
@@ -49,7 +49,7 @@ class App extends Component {
   }
 
   handleEndChange = async (e,data) => {
-    await this.handleAutoComplete(data.value);
+    //await this.handleAutoComplete(data.value);
 
     const result = data.value.slice(0,3)
     this.setState({
@@ -59,21 +59,17 @@ class App extends Component {
 
   handleButtonClick = async () => {
     const {curr_start, curr_end} = this.state;
-    const url = "https://b7b0cfe0.ngrok.io/compute"
-    console.log("test")
+    const url = "http://badf1ff5.ngrok.io/compute"
+    console.log(curr_start.toUpperCase())
     const body = {
       start: curr_start.toUpperCase(),
       end: curr_end.toUpperCase()
     }
 
-
     const query = await fetch(url, {
         method: "POST", // *GET, POST, PUT, DELETE, etc.
         body: JSON.stringify(body)
     })
-    console.log("test")
-    console.log(query)
-
       const json = await query.json();
 
       let temp = [];
@@ -93,23 +89,22 @@ class App extends Component {
 
   }
 
-  handleAutoComplete = async (curr_input) => {
-    if(curr_input !== ''){
-      const url = "https://api.sandbox.amadeus.com/v1.2/airports/autocomplete?apikey=4AmXBV32ASqGFcyq5eYK3O04RsatzXID&term=" + curr_input
-      const query = await fetch(url, {
-          method: "GET", // *GET, POST, PUT, DELETE, etc.
-          mode: "cors", // no-cors, cors, *same-origin
-          headers: {
-              "Content-Type": "application/json; charset=utf-8",
-              // "Content-Type": "application/x-www-form-urlencoded",
-          },
-      })
-
-      this.setState({
-        airport_names: await query.json(),
-      });
-    }
-  }
+  // handleAutoComplete = async (curr_input) => {
+  //   if(curr_input !== ''){
+  //     const url = "https://api.sandbox.amadeus.com/v1.2/airports/autocomplete?apikey=4AmXBV32ASqGFcyq5eYK3O04RsatzXID&term=" + curr_input
+  //     const query = await fetch(url, {
+  //         method: "GET", // *GET, POST, PUT, DELETE, etc.
+  //         headers: {
+  //             "Content-Type": "application/json; charset=utf-8",
+  //             // "Content-Type": "application/x-www-form-urlencoded",
+  //         },
+  //     })
+  //
+  //     this.setState({
+  //       airport_names: await query.json(),
+  //     });
+  //   }
+  // }
 
   render() {
     const {airports, airport_names, user_lat, user_lng, coords} = this.state
@@ -118,19 +113,9 @@ class App extends Component {
           <Menu fixed='top'>
                 <Header  style={{paddingTop: 20, paddingLeft: 10, fontSize: 30}}>✈️</Header>
                   <Input list='airports' label='From' onChange={this.handleStartChange}  style={{padding: 10}} size='big'/>
-                  <datalist id='airports'>
-                    {
-                      airport_names && airport_names.map(name => (
-                        <option value={name.value + ' - ' + name.label} />))
-                    }
-                  </datalist>
+
                 <Input list='airports' label='To' onChange={this.handleEndChange} style={{padding: 10}} size='big'/>
-                <datalist id='airports'>
-                  {
-                    airport_names && airport_names.map(name => (
-                      <option value={name.value}>name.value + ' - ' + name.label</option>))
-                  }
-                </datalist>
+              
                 <div style={{paddingTop: 15, paddingRight: 150}}>
                   <Button fluid onClick={this.handleButtonClick} color='yellow' size='medium' >
                     Get Itinerary
